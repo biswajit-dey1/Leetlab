@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken"
-import { db } from "../src/libs/db.js";
+import { db } from "../libs/db.js";
 
 const isLoggedIn = async (req, res, next) => {
 

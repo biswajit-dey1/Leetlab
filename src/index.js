@@ -19,6 +19,8 @@ app.get('/', (req,res) =>{
 })
 
 app.use("/api/v1/auth",authRoutes)
+app.use("/api/v1/problem",)
+
 app.listen(port, () =>{
     console.log(`App is listening on ${port}`);
     

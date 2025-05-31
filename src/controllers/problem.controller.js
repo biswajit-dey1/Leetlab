@@ -177,7 +177,7 @@ export const getProblemById = async (req, res) => {
 
 export const updateProblem = async (req, res) => {
 
-  const { title,
+    const { title,
         description,
         difficulty,
         tags,
@@ -226,7 +226,7 @@ export const updateProblem = async (req, res) => {
 
         const cleanUpdateData = cleanObject(updateData)
         console.log(cleanUpdateData);
-        
+
 
 
 
@@ -277,7 +277,7 @@ export const updateProblem = async (req, res) => {
 
 
             console.log(updateProblem);
-            
+
 
             return res.status(201).json({
                 sucess: true,
@@ -294,4 +294,55 @@ export const updateProblem = async (req, res) => {
                 error: "Error While updating Problem by id",
             })
     }
+}
+
+
+export const deleteProblem = async (req, res) => {
+
+    const problemId = req.params.id
+    console.log(problemId);
+    
+    const userId = req.user.id
+
+    try {
+        const problem = await db.problem.findUnique({
+            where: {
+                id: problemId
+            }
+        })
+
+        if (!problem) {
+            return res.status(400)
+                .json({
+                    error: "Problem Not found"
+                })
+        }
+
+
+        if (problem.userId !== userId) {
+            return res.status(403)
+                .json({
+                    succes: false,
+                    message: "Unauthorized to delete this problem",
+                })
+        }
+
+        await db.problem.delete({
+            where: {
+                id: problemId
+            }
+        })
+
+        res.status(202)
+            .json({
+                success: true,
+                message: "Problem deleted Successfully"
+            })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            error: "Error While deleting the problem",
+        });
+    }
+
 }

@@ -1,54 +1,53 @@
-import { useState } from "react";
+import React, { useState } from 'react'
 import { useForm } from "react-hook-form"
-import {zodResolver} from "@hookform/resolvers/zod"
-
-import {z} from "zod"
-
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Link } from 'react-router-dom'
 import {
-  Code,
-  Eye,
-  EyeOff,
-  Loader2,
-  Lock,
-  Mail,
+    Code,
+    Eye,
+    EyeOff,
+    Loader2,
+    Lock,
+    Mail,
 } from "lucide-react";
 
+import { z } from "zod";
 
-import { useAuthStore } from "../store/useAuthStore";
+import { useAuthStore } from '../store/useAuthStore';
 
-const SignUpSchema = z.object({
-  email:z.string().email("Enter a valid email"),
-  password:z.string().min(6,"Password must be atleast of 6 characters"),
-  name:z.string().min(3,"Name must be atleast 3 character")
+const LoginSchema = z.object({
+    email: z.string().email("Enter a valid email"),
+    password: z.string().min(6, "Password must be atleast of 6 characters"),
+
 })
-function SignUpPage() {
 
-  const [showPassword , setShowPassword] = useState(false);
-  const {register, handleSubmit, formState:{errors} } = useForm({
-    resolver:zodResolver(SignUpSchema)
-  })
+function LoginPage() {
 
-   const {signup ,  isSigninUp} = useAuthStore()
+    const { isLoggingIn, login } = useAuthStore()
 
+    const [showPassword, setShowPassword] = useState(false)
 
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({
+        resolver: zodResolver(LoginSchema)
+    })
 
-
-  async function onSubmit(data){
-    try {
-      await signup(data)
-      console.log("signup data" , data)
-      
-    } catch (error) {
-       console.error("SignUp failed:", error);
-    }
-  }
-
-  
+ const onSubmit = async (data) =>{
  
-
-  return (
-    <>
-      <div className='h-screen w-screen flex '>
+  try {
+    await login(data)
+    console.log("Login data" , data)
+  } catch (error) {
+     console.error("Signup failed" , error)
+  }
+ }
+    return (
+       
+        <>
+           <div className='h-screen w-screen flex '>
 
 
         <div className=" w-1/2 h-full flex flex-col justify-center items-center p-6 sm:p-12">
@@ -84,32 +83,7 @@ function SignUpPage() {
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
 
-            <div className="form-control">
-
-              <label className="label">
-                <span className="label-text font-medium">Name</span>
-              </label>
-
-              <div className="relative">
-
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Code className="h-5 w-5 text-base-content/40" />
-                </div>
-               
-               <input type="text"
-               {...register("name")}
-               className={`input input-bordered w-sm ${errors.name ? "input-error" : ""}`}
-               placeholder="John Doe"
-               />
-              </div>
-              {errors.name && (
-               <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
-              )}
-
-            </div>
-           
-
-            <div className="form-control">
+            <div className="form-control w-sm">
               <label className="label">
                 <span className="label-text font-medium">Email</span>
               </label>
@@ -171,13 +145,13 @@ function SignUpPage() {
 
         <button type="submit" className="btn btn-primary w-full">
           {
-            isSigninUp ? (
+            isLoggingIn ? (
              <>
                <Loader2 className="h-5 w-5 animate-spin" />
-                  Signing...
+                  Logging...
                 </>
             ) : (
-              "Sign up"
+              "Login "
             )
           }
         </button>
@@ -193,8 +167,11 @@ function SignUpPage() {
 
         <div className="w-1/2 h-full bg-red-200">Right</div>
       </div>
-    </>
-  );
+    
+        
+        </>
+
+    )
 }
 
-export default SignUpPage;
+export default LoginPage

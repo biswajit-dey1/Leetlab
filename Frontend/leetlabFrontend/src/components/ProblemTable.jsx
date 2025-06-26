@@ -8,9 +8,6 @@ import { Link } from "react-router-dom";
 const ProblemTable = ({ problems }) => {
 
 
-
-
-
     const [search, setSearch] = useState("");
     const [difficulty, setDifficulty] = useState("ALL");
     const [selectedTag, setSelectedTag] = useState("ALL");
@@ -50,9 +47,9 @@ const ProblemTable = ({ problems }) => {
 
 
 
-    console.log(filteredProblems.forEach((el) =>{
-        console.log(el.tags)
-    }));
+    // console.log(filteredProblems.forEach((el) =>{
+    //     console.log(el.tags)
+    // }));
     
 
 

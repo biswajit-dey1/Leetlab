@@ -1,21 +1,19 @@
 import React, { useEffect } from 'react'
 
-import { usePromblemStore } from '../store/useProblemStore'
+import { useProblemstore } from '../store/useProblemStore.js';
+
 import ProblemTable from '../components/ProblemTable';
 
 
 function HomePage() {
 
-  const { problems, getAllProblems } = usePromblemStore();
+  const { problems, getAllProblems } = useProblemstore()
+
 
   useEffect(() => {
-
     getAllProblems()
-
   }, [getAllProblems])
 
-
-  
 
 
   return (
@@ -34,16 +32,16 @@ function HomePage() {
         problems
       </p>
 
-       {
-      problems.length > 0 ? <ProblemTable  problems= {problems}/> : (
-      <p>
-        No Problem found
-      </p>
-      )
-    }
+      {
+        problems.length > 0 ? <ProblemTable problems={problems} /> : (
+          <p>
+            No Problem found
+          </p>
+        )
+      }
     </div>
-    
-  
+
+
 
   )
 }

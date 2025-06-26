@@ -13,6 +13,7 @@ import Layout from './layout/layout'
 import AdminRoute from './components/AdminRoute'
 
 import AddProblem from './page/AddProblem'
+import ProblemPage from './page/ProblemPage'
 
 
 
@@ -45,9 +46,13 @@ function App() {
           />
 
           <Route
-
             path='/login'
             element={!authUser ? <LoginPage /> : <Navigate to={"/"} />}
+          />
+
+          <Route
+          path='/problem/:id'
+          element={authUser ? <ProblemPage/> : <Navigate to={"/login"} />}
           />
 
           <Route

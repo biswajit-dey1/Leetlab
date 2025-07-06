@@ -25,6 +25,11 @@ function ProblemPage() {
 
     const { problem, isProblemLoading, getProblemById } = useProblemstore()
     const { id } = useParams()
+    const [code, setCode] = useState("")
+    const [selectedLanguage, setSelectedLanguage] = useState("javascript")
+
+    const [activeTab, setActiveTab] = useState("description")
+
 
 
 
@@ -33,8 +38,131 @@ function ProblemPage() {
         getProblemById(id)
     }, [id])
 
-    console.log(problem);
 
+    const handleLanguageChange = (e) => {
+        const lang = e.target.value
+        setSelectedLanguage(lang)
+        setCode(problem.codeSnippets?.[lang] || "")
+    }
+
+    const renderTabContent = () => {
+
+        switch (activeTab) {
+
+            case "description":
+
+                return (
+                    <div className='prose max-w-none'>
+                        <p className='text-lg mb-6 '>{problem.description}</p>
+
+                        {problem.examples && (
+                            <>
+                                <h3 className='text-xl font-bold mb-4 '>Example:</h3>
+
+
+                                {Object.entries(problem.examples).map(
+                                    ([lang, example], idx) => (
+
+                                        <div
+                                            key={lang}
+                                            className='bg-base-200 p-6 rounded-xl mb-6 font-mono '>
+
+
+                                            <div className='mb-4'>
+
+                                                <div className='text-indigo-300 mb-2 text-base font-semibold'>
+                                                    Input:
+                                                </div>
+                                                <span className='bg-black/90 px-4 py-1 rounded-lg font-semibold text-white'>
+                                                    {example.input}
+                                                </span>
+
+
+
+                                            </div>
+
+                                            <div className='mb-4' >
+
+                                                <div className='text-indigo-300 mb-2 text-base font-semibold'>
+                                                    Output:
+                                                </div>
+
+                                                <span className='bg-black/90 px-4 py-1 rounded-lg font-semibold text-white' >
+                                                    {example.output}
+                                                </span>
+                                            </div>
+
+                                            {example.explanation && (
+
+                                                <div>
+
+                                                    <div className='text-emerald-300 mb-2 text-base'>
+                                                        Explanation
+                                                    </div>
+
+                                                    <p className='text-base-content/70 text-lg font-semibold '>
+                                                        {example.explanation}
+                                                    </p>
+
+                                                </div>
+
+                                            )}
+
+
+                                        </div>
+                                    ))}
+
+
+                            </>
+                        )}
+
+                        {problem.constraints && (
+                            <>
+                                <h3 className='text-xl font-bold mb-4'>Constraints:</h3>
+
+                                <div className='bg-base-200 p-6 rounded-xl mb-6'>
+
+                                    <span className='bg-black/90 px-4 py-1 rounded-lg font-semibold text-white text-base'>
+                                        {problem.constraints}
+                                    </span>
+                                </div>
+                            </>
+                        )}
+
+                    </div>
+                );
+
+            case "submission":
+                return (
+
+                    <div className='p-4 text-center text-base-content/70'>
+                        No submission available
+                    </div>
+                );
+
+            case "hints":
+
+                return (
+                    <div className='p-4'>
+                        {problem?.hints ? (
+                            <div className="bg-base-200 p-6 rounded-xl">
+                                <span className="bg-black/90 px-4 py-1 rounded-lg font-semibold text-white text-lg">
+                                    {problem.hints}
+                                </span>
+                            </div>
+                        ) : (
+                            <div className="text-center text-base-content/70">
+                                No hints available
+                            </div>
+                        )}
+
+                    </div>
+                )
+
+            default:
+                return null;
+        }
+    }
 
 
     const submissionCount = 10
@@ -94,7 +222,7 @@ function ProblemPage() {
                 </div>
 
 
-                <div className='flex-none gap-4 mr-20'>
+                <div className='flex gap-4 '>
 
                     <button className='btn btn-ghost btn-circle'>
                         <Bookmark className="w-5 h-5" />
@@ -103,15 +231,29 @@ function ProblemPage() {
                     <button className="btn btn-ghost btn-circle">
                         <Share2 className="w-5 h-5" />
                     </button>
+
+                    <select
+                        className='select select-bordered select-primary w-40'
+                        value={selectedLanguage}
+                        onChange={handleLanguageChange}
+                    >
+                        {Object.keys(problem.codeSnippets || {}).map((lang) => (
+                            <option key={lang} value={lang}>
+
+                                {lang.charAt(0).toUpperCase() + lang.slice(1)}
+
+                            </option>
+                        ))}
+                    </select>
                 </div>
 
             </nav>
 
-            <div className="container mx-auto p-4">
+            <div className="container mx-auto p-4 ">
 
-                <div className=' grid grid-cols-1 lg:grid-cols-2 gap-6'>
+                <div className=' grid grid-cols-1 lg:grid-cols-2 gap-6 '>
 
-                    <div className='card bg-base-100 shadow-xl'>
+                    <div className='card bg-base-100 shadow-xl flex'>
 
                         <div className='card-body p-0'>
 
@@ -120,19 +262,26 @@ function ProblemPage() {
                                 <button
                                     className={`tab gap-2 `}
 
+                                    onClick={() => setActiveTab("description")}
+
                                 >
                                     <FileText className="w-4 h-4" />
                                     Description
                                 </button>
+
                                 <button
                                     className={`tab gap-2`}
+
+                                    onClick={() => setActiveTab("submission")}
 
                                 >
                                     <Code2 className="w-4 h-4" />
                                     Submissions
                                 </button>
+
                                 <button
                                     className={`tab gap-2 `}
+                                    onClick={() => setActiveTab("discussion")}
 
                                 >
                                     <MessageSquare className="w-4 h-4" />
@@ -140,6 +289,7 @@ function ProblemPage() {
                                 </button>
                                 <button
                                     className={`tab gap-2 `}
+                                    onClick={() => setActiveTab("hints")}
 
                                 >
                                     <Lightbulb className="w-4 h-4" />
@@ -147,7 +297,10 @@ function ProblemPage() {
                                 </button>
                             </div>
 
+                            <div className='p-6 '>{renderTabContent()}</div>
+
                         </div>
+
                     </div>
 
 
@@ -165,13 +318,43 @@ function ProblemPage() {
                             <div className='h-[600px] w-full'>
                                 <Editor
                                     height="100%"
-                                    language="javascript"
+                                    language={selectedLanguage.toLowerCase()}
                                     theme='vs-dark'
+                                    value={code}
+                                    onChange={(value) => setCode(value || "")}
+                                    options={{
+                                        minimap: { enabled: false },
+                                        fontSize: 18,
+                                        lineNumbers: "on",
+                                        roundedSelection: false,
+                                        scrollBeyondLastLine: false,
+                                        readOnly: false,
+                                        automaticLayout: true,
+                                    }}
+
                                 />
 
                             </div>
 
+
+                            <div className='p-4 border-t border-base-300 bg-base-20'>
+
+                                <div className='flex justify-between items-center'>
+                                    <button className='btn btn-primary  '>
+                                        Run Code
+
+                                    </button>
+
+                                    <button className='btn btn-success '>
+                                        Submit Solution
+                                    </button>
+
+                                </div>
+
+                            </div>
+
                         </div>
+
                     </div>
 
 
